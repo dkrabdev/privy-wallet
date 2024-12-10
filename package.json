@@ -6,21 +6,41 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:fix": "next lint --fix"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.0",
+    "@inkonchain/ink-kit": "^0.1.2",
+    "@privy-io/react-auth": "^1.95.3",
+    "@privy-io/server-auth": "^1.16.7",
+    "@reown/walletkit": "^1.1.1",
+    "@tanstack/react-query": "^5.62.2",
+    "@walletconnect/core": "^2.17.2",
+    "@walletconnect/utils": "^2.17.2",
+    "@zerodev/sdk": "^5.4.1",
+    "eventemitter3": "^5.0.1",
+    "next": "15.0.3",
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106",
-    "next": "15.0.3"
+    "tailwind-merge": "^2.5.5",
+    "viem": "^2.21.53",
+    "wagmi": "^2.13.3",
+    "zod": "^3.24.0"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
+    "@types/react": "npm:types-react@beta",
+    "@types/react-dom": "npm:types-react-dom@beta",
     "eslint": "^8",
-    "eslint-config-next": "15.0.3"
+    "eslint-config-next": "15.0.3",
+    "postcss": "^8",
+    "prettier": "^3.4.2",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  },
+  "overrides": {
+    "@types/react": "npm:types-react@beta",
+    "@types/react-dom": "npm:types-react-dom@beta"
   }
 }
