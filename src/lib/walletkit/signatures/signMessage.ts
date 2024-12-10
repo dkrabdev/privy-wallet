@@ -1,9 +1,8 @@
 import { IWalletKit } from '@reown/walletkit';
-import { ConnectedWallet } from '@privy-io/react-auth';
-import { createWalletClient, custom, hexToString } from 'viem';
+import { hexToString, WalletClient } from 'viem';
 
 interface SignMessageOptions {
-  wallet: ConnectedWallet;
+  walletClient: WalletClient;
   walletKit: IWalletKit;
   context: {
     requestId: number;
@@ -13,17 +12,13 @@ interface SignMessageOptions {
 }
 
 export async function signMessage({
-  wallet,
+  walletClient,
   context,
   walletKit,
 }: SignMessageOptions) {
   const { topic, message, requestId } = context;
 
   try {
-    const walletClient = createWalletClient({
-      transport: custom(await wallet.getEthereumProvider()),
-    });
-
     const [account] = await walletClient.getAddresses();
     const signature = await walletClient.signMessage({
       account,

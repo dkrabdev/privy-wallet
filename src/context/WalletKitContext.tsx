@@ -10,7 +10,9 @@ import { Core } from '@walletconnect/core';
 import { WalletKit, IWalletKit } from '@reown/walletkit';
 import { SessionTypes } from '@walletconnect/types';
 import { useCurrentWallet } from '@/hooks/useCurrentWallet';
-import { useSubscribeOnInit } from '@/hooks/useSubscribeOnInit/useSubscribeOnInit';
+import { getWalletClient } from '@/lib/walletProvider';
+import { handleSessionProposal } from '@/lib/walletkit/handleSessionProposal';
+import { handleSessionRequest } from '@/lib/walletkit/handleSessionRequest';
 
 interface WalletKitValue {
   walletKit: IWalletKit | null;
@@ -25,10 +27,15 @@ export const WalletKitContextProvider: React.FC<PropsWithChildren> = ({
   children,
 }) => {
   const wallet = useCurrentWallet();
+  const [initiated, setInitiated] = useState(false);
   const [walletKit, setWalletKit] = useState<IWalletKit | null>(null);
   const [sessions, setSessions] = useState<SessionTypes.Struct[]>([]);
 
   useEffect(() => {
+    if (!wallet || initiated) {
+      return;
+    }
+
     const initWalletKit = async () => {
       const core = new Core({
         projectId: process.env['NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID'],
@@ -41,33 +48,33 @@ export const WalletKitContextProvider: React.FC<PropsWithChildren> = ({
         icons: ['https://assets.reown.com/reown-profile-pic.png'],
       };
 
-      const walletKitInstance = await WalletKit.init({
+      const walletKit = await WalletKit.init({
         core,
         metadata,
       });
 
-      setWalletKit(walletKitInstance);
+      const walletClient = await getWalletClient(wallet);
+
+      walletKit.on('session_proposal', (proposal) =>
+        handleSessionProposal(walletKit, walletClient, proposal)
+      );
+
+      walletKit.on('session_request', (requestEvent) =>
+        handleSessionRequest(walletKit, walletClient, requestEvent)
+      );
+
+      walletKit.on('session_delete', (data) => {
+        console.log('session_delete event received', data);
+        // setSessions(Object.values(walletKit.getActiveSessions()));
+      });
+
+      setSessions(Object.values(walletKit.getActiveSessions()));
+      setWalletKit(walletKit);
+      setInitiated(true);
     };
 
     initWalletKit();
-  }, []);
-
-  useSubscribeOnInit(walletKit, wallet);
-
-  useEffect(() => {
-    if (!walletKit) return;
-
-    walletKit.on('session_delete', (data) => {
-      console.log('session_delete event received', data);
-      // setSessions(Object.values(walletKit.getActiveSessions()));
-    });
-  }, [walletKit]);
-
-  useEffect(() => {
-    if (!walletKit) return;
-
-    setSessions(Object.values(walletKit.getActiveSessions()));
-  }, [walletKit]);
+  }, [wallet, initiated]);
 
   return (
     <WalletKitContext.Provider

@@ -1,10 +1,9 @@
 import { IWalletKit } from '@reown/walletkit';
-import { ConnectedWallet } from '@privy-io/react-auth';
-import { createWalletClient, custom } from 'viem';
+import { WalletClient } from 'viem';
 import { TypedData } from '@/schemas/EIP712DomainSchema';
 
 interface SignTypedDataOptions {
-  wallet: ConnectedWallet;
+  walletClient: WalletClient;
   walletKit: IWalletKit;
   context: {
     requestId: number;
@@ -14,17 +13,13 @@ interface SignTypedDataOptions {
 }
 
 export async function signTypedData({
-  wallet,
-  context,
+  walletClient,
   walletKit,
+  context,
 }: SignTypedDataOptions) {
   const { topic, data, requestId } = context;
 
   try {
-    const walletClient = createWalletClient({
-      transport: custom(await wallet.getEthereumProvider()),
-    });
-
     const [account] = await walletClient.getAddresses();
     const signature = await walletClient.signTypedData({
       account,
