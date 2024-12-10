@@ -12,7 +12,7 @@ const HexStringSchema = z.string().refine(
 const EIP712DomainSchema = z.object({
   name: z.string().optional(),
   version: z.string().optional(),
-  chainId: z.number().optional(),
+  chainId: z.union([z.number(), HexStringSchema]).optional(),
   verifyingContract: HexStringSchema.optional(),
   salt: HexStringSchema.optional(),
 });

@@ -23,7 +23,15 @@ export async function signTypedData({
     const [account] = await walletClient.getAddresses();
     const signature = await walletClient.signTypedData({
       account,
-      domain: data.domain,
+      domain: {
+        ...data.domain,
+        chainId:
+          typeof data.domain.chainId === 'number'
+            ? data.domain.chainId
+            : data.domain.chainId
+              ? parseInt(data.domain.chainId, 10)
+              : undefined,
+      },
       types: data.types,
       primaryType: data.primaryType,
       message: data.message,

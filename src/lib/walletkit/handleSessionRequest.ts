@@ -44,6 +44,8 @@ export async function handleSessionRequest(
         throw new Error('No message provided');
       }
 
+      console.log(message);
+
       const parsedData = parseSignTypedMessage(message);
 
       if (!parsedData) {
@@ -91,6 +93,7 @@ export async function handleSessionRequest(
 function parseSignTypedMessage(message: string): TypedData | null {
   try {
     const data = JSON.parse(message);
+    console.log('DATA', data);
     const parsedData = TypedDataSchema.parse(data) as TypedData;
 
     return parsedData;
