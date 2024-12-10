@@ -1,7 +1,7 @@
 export const InkLogo = () => {
   return (
     <svg
-      className="w-24 h-24 fill-inkPurple"
+      className="w-24 h-24 fill-white"
       width="833"
       height="275"
       viewBox="0 0 833 275"
